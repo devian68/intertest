@@ -296,16 +296,19 @@ System.register("chunks:///_virtual/debug-view-runtime-control.ts", ['./rollupPl
 });
 
 System.register("chunks:///_virtual/GameUtils.ts", ['cc'], function (exports) {
-  var cclegacy, sys, native, log;
+  var cclegacy, sys, native, log, view, macro;
   return {
     setters: [function (module) {
       cclegacy = module.cclegacy;
       sys = module.sys;
       native = module.native;
       log = module.log;
+      view = module.view;
+      macro = module.macro;
     }],
     execute: function () {
       exports({
+        changeOrientation: changeOrientation,
         createFile: createFile,
         getBundleId: getBundleId,
         getDeviceName: getDeviceName,
@@ -319,6 +322,48 @@ System.register("chunks:///_virtual/GameUtils.ts", ['cc'], function (exports) {
       });
 
       cclegacy._RF.push({}, "bdcb4xusaVGWZIdrFOcIXq4", "GameUtils", undefined);
+
+      function changeOrientation(value) {
+        let isSupportOrientation = null;
+
+        if (sys.isNative) {
+          if (sys.os === sys.OS.IOS) {
+            //@ts-expect-error
+            isSupportOrientation = native.reflection.callStaticMethod("ViewController", "isSupportOrientation");
+
+            try {
+              native.reflection.callStaticMethod("ViewController", "rotateScreen:", value);
+            } catch (e) {
+              log("changeOrientation e: " + JSON.stringify(e));
+            }
+          } else if (sys.os === sys.OS.ANDROID) {
+            if (native) {
+              try {
+                let className = "com/cocos/game/AppActivity";
+                let methodName = "setOrientation";
+                let methodSignature = "(I)V";
+
+                if (native) {
+                  isSupportOrientation = native.reflection.callStaticMethod(className, "isSupportOrientation", "()Z");
+                  native.reflection.callStaticMethod(className, methodName, methodSignature, value);
+                }
+              } catch (e) {
+                log("changeOrientation e: " + JSON.stringify(e));
+              }
+            }
+          }
+        }
+
+        log("isSupportOrientation: " + isSupportOrientation);
+
+        if (value == 0 || value == 2) {
+          view.setOrientation(macro.ORIENTATION_PORTRAIT);
+        } else if (value == 1 || value == 3) {
+          view.setOrientation(macro.ORIENTATION_LANDSCAPE);
+        } else {
+          view.setOrientation(macro.ORIENTATION_AUTO);
+        }
+      }
 
       function setKeepScreenOn(value) {
         if (sys.isNative) {
@@ -594,92 +639,23 @@ System.register("chunks:///_virtual/main", ['./GameUtils.ts', './OrientationMana
   };
 });
 
-System.register("chunks:///_virtual/OrientationManager.ts", ['cc'], function (exports) {
-  var cclegacy, sys, native, log, view, macro, _decorator;
-
+System.register("chunks:///_virtual/OrientationManager.ts", ['cc'], function () {
+  var cclegacy;
   return {
     setters: [function (module) {
       cclegacy = module.cclegacy;
-      sys = module.sys;
-      native = module.native;
-      log = module.log;
-      view = module.view;
-      macro = module.macro;
-      _decorator = module._decorator;
     }],
     execute: function () {
-      var _class;
-
+      // // Learn TypeScript:
       cclegacy._RF.push({}, "f156eZv65VDrY7sRAp1Dz0x", "OrientationManager", undefined);
-
-      const {
-        ccclass,
-        property
-      } = _decorator; //0 = portrait
-      //1 = landscape right
-      //2 = upside down
-      //3 = landscape right
-
-      let OrientationManager = exports('default', ccclass(_class = class OrientationManager {
-        //4 all orientation
-        //0, 2 portrait
-        //1, 3 landscape
-        static changeOrientation(value) {
-          let isSupportOrientation = null;
-
-          if (sys.isNative) {
-            if (sys.os === sys.OS.IOS) {
-              //@ts-expect-error
-              isSupportOrientation = native.reflection.callStaticMethod("ViewController", "isSupportOrientation");
-
-              try {
-                native.reflection.callStaticMethod("ViewController", "rotateScreen:", value);
-              } catch (e) {
-                log("changeOrientation e: " + JSON.stringify(e));
-              }
-            } else if (sys.os === sys.OS.ANDROID) {
-              if (native) {
-                try {
-                  let className = "com/cocos/game/AppActivity";
-                  let methodName = "setOrientation";
-                  let methodSignature = "(I)V";
-
-                  if (native) {
-                    isSupportOrientation = native.reflection.callStaticMethod(className, "isSupportOrientation", "()Z");
-                    native.reflection.callStaticMethod(className, methodName, methodSignature, value);
-                  }
-                } catch (e) {
-                  log("changeOrientation e: " + JSON.stringify(e));
-                }
-              }
-            }
-          }
-
-          log("isSupportOrientation: " + isSupportOrientation);
-
-          if (value == 0 || value == 2) {
-            view.setOrientation(macro.ORIENTATION_PORTRAIT);
-          } else if (value == 1 || value == 3) {
-            view.setOrientation(macro.ORIENTATION_LANDSCAPE);
-          } else {
-            view.setOrientation(macro.ORIENTATION_AUTO);
-          }
-        } // LIFE-CYCLE CALLBACKS:
-        // onLoad () {}
-        // start () {
-        // }
-        // update (dt) {}
-
-
-      }) || _class);
 
       cclegacy._RF.pop();
     }
   };
 });
 
-System.register("chunks:///_virtual/TestNative.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './GameUtils.ts', './OrientationManager.ts'], function (exports) {
-  var _applyDecoratedDescriptor, _initializerDefineProperty, cclegacy, Label, _decorator, Component, view, ResolutionPolicy, getIdentifier, getBundleId, getDeviceName, writeTextToClipboard, readTextFromClipboard, isSupportSendSMS, sendSMS, setKeepScreenOn, createFile, saveBase64Image, OrientationManager;
+System.register("chunks:///_virtual/TestNative.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './GameUtils.ts'], function (exports) {
+  var _applyDecoratedDescriptor, _initializerDefineProperty, cclegacy, Label, _decorator, Component, view, ResolutionPolicy, changeOrientation, getIdentifier, getBundleId, getDeviceName, writeTextToClipboard, readTextFromClipboard, isSupportSendSMS, sendSMS, setKeepScreenOn, createFile, saveBase64Image;
 
   return {
     setters: [function (module) {
@@ -693,6 +669,7 @@ System.register("chunks:///_virtual/TestNative.ts", ['./rollupPluginModLoBabelHe
       view = module.view;
       ResolutionPolicy = module.ResolutionPolicy;
     }, function (module) {
+      changeOrientation = module.changeOrientation;
       getIdentifier = module.getIdentifier;
       getBundleId = module.getBundleId;
       getDeviceName = module.getDeviceName;
@@ -703,13 +680,12 @@ System.register("chunks:///_virtual/TestNative.ts", ['./rollupPluginModLoBabelHe
       setKeepScreenOn = module.setKeepScreenOn;
       createFile = module.createFile;
       saveBase64Image = module.saveBase64Image;
-    }, function (module) {
-      OrientationManager = module.default;
     }],
     execute: function () {
       var _dec, _dec2, _class, _class2, _descriptor;
 
-      cclegacy._RF.push({}, "6a073rHNKhEMJEySU9d017q", "TestNative", undefined);
+      cclegacy._RF.push({}, "6a073rHNKhEMJEySU9d017q", "TestNative", undefined); // import { OrientationManager } from './OrientationManager';
+
 
       const {
         ccclass,
@@ -726,7 +702,10 @@ System.register("chunks:///_virtual/TestNative.ts", ['./rollupPluginModLoBabelHe
           this.frameCount = 0;
         }
 
-        onLoad() {// try{OrientationManager.changeOrientation(1);}catch(_){}
+        onLoad() {
+          try {
+            changeOrientation(1);
+          } catch (_) {}
         }
 
         testGetId() {
@@ -760,13 +739,13 @@ System.register("chunks:///_virtual/TestNative.ts", ['./rollupPluginModLoBabelHe
         }
 
         testPortrait() {
-          OrientationManager.changeOrientation(0);
+          changeOrientation(0);
           view.setDesignResolutionSize(720, 1560, ResolutionPolicy.SHOW_ALL);
           this.txt += "\n===Screen portrait";
         }
 
         testLandscape() {
-          OrientationManager.changeOrientation(1);
+          changeOrientation(1);
           view.setDesignResolutionSize(1560, 720, ResolutionPolicy.SHOW_ALL);
           this.txt += "\n===Screen landscape";
         }
