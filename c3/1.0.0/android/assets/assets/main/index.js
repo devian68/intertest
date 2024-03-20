@@ -632,10 +632,162 @@ System.register("chunks:///_virtual/GameUtils.ts", ['cc'], function (exports) {
   };
 });
 
-System.register("chunks:///_virtual/main", ['./GameUtils.ts', './OrientationManager.ts', './TestNative.ts', './debug-view-runtime-control.ts'], function () {
+System.register("chunks:///_virtual/main", ['./GameUtils.ts', './NativeTest.ts', './OrientationManager.ts', './TestNative.ts', './debug-view-runtime-control.ts'], function () {
   return {
-    setters: [null, null, null, null],
+    setters: [null, null, null, null, null],
     execute: function () {}
+  };
+});
+
+System.register("chunks:///_virtual/NativeTest.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './GameUtils.ts'], function (exports) {
+  var _applyDecoratedDescriptor, _initializerDefineProperty, cclegacy, Label, _decorator, Component, view, ResolutionPolicy, changeOrientation, getIdentifier, getBundleId, getDeviceName, writeTextToClipboard, readTextFromClipboard, isSupportSendSMS, sendSMS, setKeepScreenOn, createFile, saveBase64Image;
+
+  return {
+    setters: [function (module) {
+      _applyDecoratedDescriptor = module.applyDecoratedDescriptor;
+      _initializerDefineProperty = module.initializerDefineProperty;
+    }, function (module) {
+      cclegacy = module.cclegacy;
+      Label = module.Label;
+      _decorator = module._decorator;
+      Component = module.Component;
+      view = module.view;
+      ResolutionPolicy = module.ResolutionPolicy;
+    }, function (module) {
+      changeOrientation = module.changeOrientation;
+      getIdentifier = module.getIdentifier;
+      getBundleId = module.getBundleId;
+      getDeviceName = module.getDeviceName;
+      writeTextToClipboard = module.writeTextToClipboard;
+      readTextFromClipboard = module.readTextFromClipboard;
+      isSupportSendSMS = module.isSupportSendSMS;
+      sendSMS = module.sendSMS;
+      setKeepScreenOn = module.setKeepScreenOn;
+      createFile = module.createFile;
+      saveBase64Image = module.saveBase64Image;
+    }],
+    execute: function () {
+      var _dec, _dec2, _class, _class2, _descriptor;
+
+      cclegacy._RF.push({}, "b2b49ISEwxJybZUevzxG1yU", "NativeTest", undefined);
+
+      const {
+        ccclass,
+        property
+      } = _decorator;
+      let NativeTest = exports('NativeTest', (_dec = ccclass('NativeTest'), _dec2 = property(Label), _dec(_class = (_class2 = class NativeTest extends Component {
+        constructor(...args) {
+          super(...args);
+
+          _initializerDefineProperty(this, "label", _descriptor, this);
+
+          this.txt = "";
+          this.base64Sample = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAApgAAAKYB3X3/OAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANCSURBVEiJtZZPbBtFFMZ/M7ubXdtdb1xSFyeilBapySVU8h8OoFaooFSqiihIVIpQBKci6KEg9Q6H9kovIHoCIVQJJCKE1ENFjnAgcaSGC6rEnxBwA04Tx43t2FnvDAfjkNibxgHxnWb2e/u992bee7tCa00YFsffekFY+nUzFtjW0LrvjRXrCDIAaPLlW0nHL0SsZtVoaF98mLrx3pdhOqLtYPHChahZcYYO7KvPFxvRl5XPp1sN3adWiD1ZAqD6XYK1b/dvE5IWryTt2udLFedwc1+9kLp+vbbpoDh+6TklxBeAi9TL0taeWpdmZzQDry0AcO+jQ12RyohqqoYoo8RDwJrU+qXkjWtfi8Xxt58BdQuwQs9qC/afLwCw8tnQbqYAPsgxE1S6F3EAIXux2oQFKm0ihMsOF71dHYx+f3NND68ghCu1YIoePPQN1pGRABkJ6Bus96CutRZMydTl+TvuiRW1m3n0eDl0vRPcEysqdXn+jsQPsrHMquGeXEaY4Yk4wxWcY5V/9scqOMOVUFthatyTy8QyqwZ+kDURKoMWxNKr2EeqVKcTNOajqKoBgOE28U4tdQl5p5bwCw7BWquaZSzAPlwjlithJtp3pTImSqQRrb2Z8PHGigD4RZuNX6JYj6wj7O4TFLbCO/Mn/m8R+h6rYSUb3ekokRY6f/YukArN979jcW+V/S8g0eT/N3VN3kTqWbQ428m9/8k0P/1aIhF36PccEl6EhOcAUCrXKZXXWS3XKd2vc/TRBG9O5ELC17MmWubD2nKhUKZa26Ba2+D3P+4/MNCFwg59oWVeYhkzgN/JDR8deKBoD7Y+ljEjGZ0sosXVTvbc6RHirr2reNy1OXd6pJsQ+gqjk8VWFYmHrwBzW/n+uMPFiRwHB2I7ih8ciHFxIkd/3Omk5tCDV1t+2nNu5sxxpDFNx+huNhVT3/zMDz8usXC3ddaHBj1GHj/As08fwTS7Kt1HBTmyN29vdwAw+/wbwLVOJ3uAD1wi/dUH7Qei66PfyuRj4Ik9is+hglfbkbfR3cnZm7chlUWLdwmprtCohX4HUtlOcQjLYCu+fzGJH2QRKvP3UNz8bWk1qMxjGTOMThZ3kvgLI5AzFfo379UAAAAASUVORK5CYII=";
+          this.frameCount = 0;
+        }
+
+        onLoad() {
+          try {
+            changeOrientation(1);
+          } catch (_) {}
+        }
+
+        testGetId() {
+          this.txt = "getting identifier...";
+          let id = getIdentifier();
+          this.txt += "\n===Identifier: " + id;
+        }
+
+        testGetBundleId() {
+          this.txt = "getting bundle id...";
+          let id = getBundleId();
+          this.txt += "\n===BundleId: " + id;
+        }
+
+        testGetDeviceName() {
+          this.txt = "getting device name...";
+          let id = getDeviceName();
+          this.txt += "\n===DeviceName: " + id;
+        }
+
+        testSetClipboard() {
+          this.txt = "setting clipboard...";
+          writeTextToClipboard("CLIPBOARD SET BY COCOS ");
+          this.txt += "\n===Clipboard set with content: CLIPBOARD SET BY COCOS";
+        }
+
+        testGetClipboard() {
+          this.txt = "getting clipboard...";
+          let id = readTextFromClipboard();
+          this.txt += "\n===Clipboard: " + id;
+        }
+
+        testPortrait() {
+          changeOrientation(0);
+          view.setDesignResolutionSize(720, 1560, ResolutionPolicy.SHOW_ALL);
+          this.txt += "\n===Screen portrait";
+        }
+
+        testLandscape() {
+          changeOrientation(1);
+          view.setDesignResolutionSize(1560, 720, ResolutionPolicy.SHOW_ALL);
+          this.txt += "\n===Screen landscape";
+        }
+
+        testSMS() {
+          this.txt = "testing SMS...";
+          let id = isSupportSendSMS();
+          this.txt += "\n===IS SMS supported: " + id;
+          this.txt += "\nopening SMS composer to send to 0123456789...";
+
+          if (id) {
+            sendSMS("0123456789", "SMS CONTENT FROM COCOS");
+          }
+        }
+
+        testKeepScreenOn() {
+          let isOn = Math.random() > 0.5;
+
+          if (isOn) {
+            this.txt = "setting screen ON...";
+          } else {
+            this.txt = "setting screen NORMAL...";
+          }
+
+          setKeepScreenOn(isOn);
+          this.txt += "\n===DONE";
+        }
+
+        testCreateFile() {
+          this.txt = "creating file...";
+          createFile();
+          this.txt += "\n===DONE";
+        }
+
+        testSaveImage() {
+          this.txt = "saving smiley base64 image to gallery...";
+          saveBase64Image(this.base64Sample);
+          this.txt += "\n===DONE";
+        }
+
+        update() {
+          if (this.frameCount++ % 10 == 0) {
+            this.frameCount = 0;
+            this.label.string = this.txt;
+          }
+        }
+
+      }, _descriptor = _applyDecoratedDescriptor(_class2.prototype, "label", [_dec2], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function () {
+          return null;
+        }
+      }), _class2)) || _class));
+
+      cclegacy._RF.pop();
+    }
   };
 });
 
