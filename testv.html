@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>CustomWebView Verification</title>
+    <style>
+        /* Using styles similar to the previously generated verification page for consistency */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 10px; font-size: 14px; }
+        .action-group { border: 1px solid #ccc; padding: 10px 15px; margin-bottom: 12px; border-radius: 6px; background-color: #f9f9f9; }
+        .action-group h2 { margin-top: 0; font-size: 1.1em; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 10px; color: #333; } /* Removed white color */
+        label { display: inline-block; min-width: 100px; margin-bottom: 5px; font-weight: 500; vertical-align: middle; }
+        input[type="text"], input[type="number"], select, textarea {
+            padding: 6px 8px; margin-right: 5px; margin-bottom: 8px; border: 1px solid #ccc;
+            border-radius: 4px; min-width: 200px; box-sizing: border-box;
+            font-size: inherit; font-family: inherit; vertical-align: middle;
+        }
+        textarea { min-height: 80px; vertical-align: top; width: calc(100% - 110px); }
+        button {
+            padding: 6px 12px; background-color: #007aff; color: white; border: none;
+            border-radius: 4px; cursor: pointer; font-size: 0.95em; margin-right: 5px; margin-bottom: 5px; vertical-align: middle;
+        }
+        button:hover { background-color: #005bb5; }
+        button.secondary { background-color: #6c757d; }
+        button.secondary:hover { background-color: #5a6268; }
+        button.danger { background-color: #dc3545; }
+        button.danger:hover { background-color: #c82333; }
+        .output {
+            background-color: #e8f4ff; border: 1px solid #c1dfff; padding: 8px; margin-top: 8px;
+            border-radius: 4px; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;
+            font-size: 0.9em; min-height: 1.2em;
+        }
+        .log-area { border: 1px solid #ddd; background-color: #f1f1f1; padding: 10px; margin-top: 15px; font-family: monospace; font-size: 0.85em; max-height: 200px; overflow-y: scroll; }
+        hr { border: none; border-top: 1px solid #eee; margin: 15px 0; }
+        .warning { color: #dc3545; font-size: 0.9em; font-style: italic; }
+        .info { background-color: #eee; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+    </style>
+</head>
+
+<body>
+
+    <h1>CustomWebView Action Verification</h1>
+    <p>Native Handler Name Expected: <strong>webAction</strong></p>
+
+    <div class="action-group">
+        <h2>URLs & Navigation</h2>
+        <label for="urlInput">External URL:</label>
+        <input type="text" id="urlInput" value="https://apple.com">
+        <button onclick="callNative('openWAUrl', { dt: document.getElementById('urlInput').value })">Open URL (External)</button>
+        <hr>
+        <label for="reloadUrlInput">Reload URL:</label>
+        <input type="text" id="reloadUrlInput" value="https://www.google.com/search?q=objective-c">
+        <button onclick="callNative('reloadWithUrl', { dt: document.getElementById('reloadUrlInput').value })">Reload WebView with URL</button>
+        </div>
+
+    <div class="action-group">
+        <h2>Storage (UserDefaults)</h2>
+        <label for="storageKey">Key:</label>
+        <input type="text" id="storageKey" value="testStorageKey">
+        <br>
+        <label for="storageValue">Value:</label>
+        <input type="text" id="storageValue" value="Value saved @ " + new Date().toLocaleTimeString()>
+        <button onclick="callNative('saveWAString', { key: document.getElementById('storageKey').value, dt: document.getElementById('storageValue').value })">Save String</button>
+        <hr>
+        <label for="loadKey">Key to Load:</label>
+        <input type="text" id="loadKey" value="testStorageKey">
+        <button onclick="callNative('loadWAString', { key: document.getElementById('loadKey').value, cb: generateCallbackId('loadStr') })">Load String</button>
+        <div class="output" id="loadStrResult">Load String Result:</div>
+    </div>
+
+    <div class="action-group">
+        <h2>Clipboard</h2>
+        <label for="clipboardValue">Text:</label>
+        <input type="text" id="clipboardValue" value="Text set via WebView Test @ " + new Date().toLocaleTimeString()>
+        <button onclick="callNative('setWAClipboard', { dt: document.getElementById('clipboardValue').value })">Set Clipboard</button>
+        <hr>
+        <button onclick="callNative('getWAClipboard', { cb: generateCallbackId('getClip') })">Get Clipboard</button>
+        <div class="output" id="getClipResult">Get Clipboard Result:</div>
+    </div>
+
+    <div class="action-group">
+        <h2>Device/App Info</h2>
+        <button onclick="callNative('getWABundleId', { cb: generateCallbackId('getBundle') })">Get Bundle ID</button>
+        <div class="output" id="getBundleResult">Bundle ID Result:</div>
+
+        <button onclick="callNative('getWASDKVersion', { cb: generateCallbackId('getSDKVer') })">Get SDK Version (from Storage)</button>
+        <div class="output" id="getSDKVerResult">SDK Version Result:</div>
+
+        <button onclick="callNative('getWADeviceModel', { cb: generateCallbackId('getDevModel') })">Get Device Model</button>
+        <div class="output" id="getDevModelResult">Device Model Result:</div>
+
+        <button onclick="callNative('getWADeviceID', { cb: generateCallbackId('getDevID') })">Get Device ID (IdentifierForVendor)</button>
+        <div class="output" id="getDevIDResult">Device ID Result:</div>
+
+        <button onclick="callNative('getWASystemInfo', { cb: generateCallbackId('getSysInfo') })">Get System Info (Combined)</button>
+        <div class="output" id="getSysInfoResult">System Info Result:</div>
+
+         <button onclick="callNative('isSupport', { cb: generateCallbackId('isSupport') })">Is Supported? (Hardcoded True)</button>
+        <div class="output" id="isSupportResult">isSupport Result:</div>
+    </div>
+
+    <div class="action-group">
+        <h2>Script/SDK Update</h2>
+        <p class="warning">Note: Script version checking requires a native `getInjectedScriptVersion` action, which is not present in the Obj-C code. Only script updating can be fully tested.</p>
+
+        <label for="sdkUrl">SDK URL:</label>
+        <input type="text" id="sdkUrl" value="http://example.com/sdk_update.zip">
+        <br>
+        <label for="sdkVer">SDK Version:</label>
+        <input type="text" id="sdkVer" value="2.0.0">
+        <br>
+        <label for="sdkRestart">SDK Needs Restart:</label>
+        <select id="sdkRestart">
+            <option value="false" selected>false</option>
+            <option value="true">true</option>
+        </select>
+        <button class="secondary" onclick="callNative('updateWASDK', { dt: document.getElementById('sdkUrl').value, ver: document.getElementById('sdkVer').value, nr: document.getElementById('sdkRestart').value === 'true' })">Trigger SDK Update</button>
+        <hr>
+
+        <div class="info">
+            Latest Version (Website): <strong id="latestVersion">N/A</strong>
+        </div>
+        <label for="scriptVer">New Script Ver:</label>
+        <input type="text" id="scriptVer" value="?.?.?">
+        <br>
+        <label for="scriptContent">New Script:</label>
+        <textarea id="scriptContent" placeholder="Paste the new combined script content here..."></textarea>
+        <br>
+        <button class="secondary" onclick="triggerScriptUpdate()" style="margin-left:105px;">Update Injected Scripts</button>
+         <p style="font-size:0.9em; color:#555;">(Saves new script & version to storage, shows restart alert)</p>
+         <pre id="latestScriptContent" style="display:none;"></pre> </div>
+
+     <div class="action-group">
+        <h2>Other Actions</h2>
+        <label for="rotateValue">Rotation:</label>
+         <select id="rotateValue">
+            <option value="0">0 (Portrait)</option>
+            <option value="1">1 (Landscape Left/Right)</option>
+            <option value="3">3 (Landscape Left/Right)</option>
+         </select>
+        <button onclick="callNative('setWAScreenRotation', { dt: parseInt(document.getElementById('rotateValue').value) })">Set Screen Rotation</button>
+        <hr>
+        <button class="danger" onclick="callNative('exitwv')">Exit WebView</button>
+    </div>
+
+    <h2>Log</h2>
+    <div id="logArea" class="log-area">Log messages will appear here...</div>
+
+    <script>
+        const NATIVE_HANDLER_NAME = "webAction"; // Matches kJavaScriptMessageHandlerName from Obj-C
+        const nativeHandler = window.webkit?.messageHandlers?.[NATIVE_HANDLER_NAME];
+        const logArea = document.getElementById('logArea');
+        let callbackCounter = 0;
+
+        // --- Website Configuration for Script Update ---
+        const LATEST_SCRIPT_VERSION = "1.3.0"; // Example: The version website wants app to have
+        // Example Combined Script (Ensure this is valid JS and matches expected functionality)
+        const NEW_COMBINED_SCRIPT = `
+            console.log('Combined Script v${LATEST_SCRIPT_VERSION} Executing');
+            /* Add actual combined proxy, selection, video logic here */
+            var WVProxyProto = function() {};
+            WVProxyProto.prototype.postEvent = function(evName, evData) { window.webkit.messageHandlers.${NATIVE_HANDLER_NAME}.postMessage({eventName: evName, eventData: evData}); };
+            var WVProxy = new WVProxyProto();
+            /* --- More script logic... --- */
+        `.trim();
+        // --- End Website Configuration ---
+
+        const latestVersionSpan = document.getElementById('latestVersion');
+        const latestScriptContentPre = document.getElementById('latestScriptContent');
+        if (latestVersionSpan) latestVersionSpan.textContent = LATEST_SCRIPT_VERSION;
+        if (latestScriptContentPre) latestScriptContentPre.textContent = NEW_COMBINED_SCRIPT; // Store for sending
+
+        function log(message) {
+            console.log(message);
+            if (!logArea) return;
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            // Sanitize message slightly for display
+            const textContent = typeof message === 'string' ? message.replace(/</g, "&lt;").replace(/>/g, "&gt;") : JSON.stringify(message);
+            logEntry.innerHTML = `[${timestamp}] ${textContent}`; // Use innerHTML carefully
+            if (logArea.childNodes.length === 0 || logArea.firstChild?.textContent !== 'Log messages will appear here...') {
+                 logArea.appendChild(logEntry);
+            } else {
+                 logArea.innerHTML = ''; // Clear initial message
+                 logArea.appendChild(logEntry);
+            }
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        if (!nativeHandler) {
+            log("ERROR: Native message handler '" + NATIVE_HANDLER_NAME + "' not found!");
+            alert("Native message handler '" + NATIVE_HANDLER_NAME + "' not found. Test page will not work.");
+        } else {
+             log("Native message handler '" + NATIVE_HANDLER_NAME + "' found.");
+        }
+
+        function callNative(action, data = {}) {
+            if (!nativeHandler) {
+                log(`ERROR: Cannot call native action '${action}'. Handler not found.`);
+                return;
+            }
+            const message = { ac: action, ...data };
+            log(`Sending to Native -> Action: ${action}, Data: ${JSON.stringify(data)}`);
+            nativeHandler.postMessage(message);
+        }
+
+        function generateCallbackId(prefix = 'cb') {
+            callbackCounter++;
+            return `${prefix}_${callbackCounter}_${Date.now()}`;
+        }
+
+        // --- Function to handle callbacks from Native ---
+        function updateResult(result) {
+            log(`Received from Native <- Callback Data: ${JSON.stringify(result)}`);
+            if (!result || !result.cb) {
+                log("WARNING: Received invalid result structure from native (missing 'cb'):" + JSON.stringify(result));
+                return;
+            }
+
+            const callbackId = result.cb;
+            const resultData = result.dt;
+            let displayElementId = null;
+            let displayText = JSON.stringify(resultData, null, 2); // Default
+
+             if (callbackId.startsWith('loadStr_')) { displayElementId = 'loadStrResult'; displayText = `Load String Result: ${typeof resultData === 'string' ? resultData : '(Not found/Invalid)'}`; }
+             else if (callbackId.startsWith('getClip_')) { displayElementId = 'getClipResult'; displayText = `Get Clipboard Result: ${resultData || '(empty)'}`; }
+             else if (callbackId.startsWith('getBundle_')) { displayElementId = 'getBundleResult'; displayText = `Bundle ID Result: ${resultData || '(N/A)'}`; }
+             else if (callbackId.startsWith('getSDKVer_')) { displayElementId = 'getSDKVerResult'; displayText = `SDK Version Result: ${resultData || '(N/A)'}`; }
+             else if (callbackId.startsWith('getDevModel_')) { displayElementId = 'getDevModelResult'; displayText = `Device Model Result: ${resultData || '(N/A)'}`; }
+             else if (callbackId.startsWith('getDevID_')) { displayElementId = 'getDevIDResult'; displayText = `Device ID Result: ${resultData || '(N/A)'}`; }
+             else if (callbackId.startsWith('getSysInfo_')) {
+                 displayElementId = 'getSysInfoResult';
+                 if (typeof resultData === 'object' && resultData !== null) {
+                     displayText = `System Info Result:\n  ID: ${resultData.id || 'N/A'}\n  Model: ${resultData.dn || 'N/A'}\n  Bundle: ${resultData.bid || 'N/A'}\n  OS: ${resultData.os || 'N/A'}\n  SDK: ${resultData.sdk || 'N/A'}`;
+                 } else { displayText = "System Info Result: Invalid format."; }
+             }
+             else if (callbackId.startsWith('isSupport_')) { displayElementId = 'isSupportResult'; displayText = `isSupport Result: ${resultData}`; }
+             // Note: No callback expected for script update action
+             else { log(`No specific display handler for callback ID: ${callbackId}`); }
+
+            if (displayElementId) {
+                const displayElement = document.getElementById(displayElementId);
+                if (displayElement) { displayElement.textContent = displayText; }
+                else { log(`ERROR: Display element not found for ID: ${displayElementId}`); }
+            }
+        }
+
+         // Function to send the COMBINED updated script - Corrected Action Name
+         function triggerScriptUpdate() {
+              if (!nativeHandler) { log("Cannot send update: Native handler not available."); return; }
+              const scriptContentEl = document.getElementById('scriptContent');
+              const scriptVerEl = document.getElementById('scriptVer');
+              const newVersion = scriptVerEl.value || LATEST_SCRIPT_VERSION; // Use input or default
+              const newScript = scriptContentEl.value || NEW_COMBINED_SCRIPT; // Use textarea or default
+
+              if (!scriptContentEl.value) {
+                  log("Info: Using default script content from JS variable for update.");
+              }
+              if (!scriptVerEl.value) {
+                   log("Info: Using default script version from JS variable for update.");
+              }
+
+             const updatePayload = { version: newVersion, script: newScript };
+             log("Sending updated combined script to native app...");
+             callNative('updateWAInjectedScripts', { dt: updatePayload }); // Use correct action name
+         }
+
+          // Initial log message
+          if (logArea.textContent === 'Log messages will appear here...') {
+                logArea.textContent = ''; // Clear placeholder
+          }
+          log("Verification page loaded. Ready to interact with native methods.");
+
+    </script>
+
+</body>
+</html>
