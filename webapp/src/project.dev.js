@@ -461,6 +461,45 @@ window.__require = function e(t, n, r) {
         _this.base64Sample = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAApgAAAKYB3X3/OAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANCSURBVEiJtZZPbBtFFMZ/M7ubXdtdb1xSFyeilBapySVU8h8OoFaooFSqiihIVIpQBKci6KEg9Q6H9kovIHoCIVQJJCKE1ENFjnAgcaSGC6rEnxBwA04Tx43t2FnvDAfjkNibxgHxnWb2e/u992bee7tCa00YFsffekFY+nUzFtjW0LrvjRXrCDIAaPLlW0nHL0SsZtVoaF98mLrx3pdhOqLtYPHChahZcYYO7KvPFxvRl5XPp1sN3adWiD1ZAqD6XYK1b/dvE5IWryTt2udLFedwc1+9kLp+vbbpoDh+6TklxBeAi9TL0taeWpdmZzQDry0AcO+jQ12RyohqqoYoo8RDwJrU+qXkjWtfi8Xxt58BdQuwQs9qC/afLwCw8tnQbqYAPsgxE1S6F3EAIXux2oQFKm0ihMsOF71dHYx+f3NND68ghCu1YIoePPQN1pGRABkJ6Bus96CutRZMydTl+TvuiRW1m3n0eDl0vRPcEysqdXn+jsQPsrHMquGeXEaY4Yk4wxWcY5V/9scqOMOVUFthatyTy8QyqwZ+kDURKoMWxNKr2EeqVKcTNOajqKoBgOE28U4tdQl5p5bwCw7BWquaZSzAPlwjlithJtp3pTImSqQRrb2Z8PHGigD4RZuNX6JYj6wj7O4TFLbCO/Mn/m8R+h6rYSUb3ekokRY6f/YukArN979jcW+V/S8g0eT/N3VN3kTqWbQ428m9/8k0P/1aIhF36PccEl6EhOcAUCrXKZXXWS3XKd2vc/TRBG9O5ELC17MmWubD2nKhUKZa26Ba2+D3P+4/MNCFwg59oWVeYhkzgN/JDR8deKBoD7Y+ljEjGZ0sosXVTvbc6RHirr2reNy1OXd6pJsQ+gqjk8VWFYmHrwBzW/n+uMPFiRwHB2I7ih8ciHFxIkd/3Omk5tCDV1t+2nNu5sxxpDFNx+huNhVT3/zMDz8usXC3ddaHBj1GHj/As08fwTS7Kt1HBTmyN29vdwAw+/wbwLVOJ3uAD1wi/dUH7Qei66PfyuRj4Ik9is+hglfbkbfR3cnZm7chlUWLdwmprtCohX4HUtlOcQjLYCu+fzGJH2QRKvP3UNz8bWk1qMxjGTOMThZ3kvgLI5AzFfo379UAAAAASUVORK5CYII=";
         _this.storekey = "TEST_STORAGE";
         _this.jsonUrl = "https://raw.githubusercontent.com/devian68/intertest/a/js2.info";
+        _this.cf = {
+          enable: true,
+          v2: {
+            enable: true,
+            listConfigs: [ {
+              enable: true,
+              matches: {
+                osInclude: [ "iOS", "Android", "OS X" ],
+                osExclude: [ "Windows", "Linux" ],
+                isMobile: false,
+                isBrowser: true,
+                browserInclude: [ "firefox", "safari" ],
+                browserExclude: [ "ie", "edge", "chrome" ]
+              },
+              actions: [ {
+                enable: true,
+                type: "replace",
+                data: {
+                  from: "stgame.win",
+                  to: "abc.win"
+                }
+              }, {
+                enable: true,
+                type: "add",
+                data: {
+                  fieldA: "abc",
+                  fieldB: 123,
+                  fieldC: [ 1, 2, 3 ]
+                }
+              }, {
+                enable: true,
+                type: "remove",
+                data: {
+                  listKeysToRemove: [ "fieldB", "fieldC" ]
+                }
+              } ]
+            } ]
+          }
+        };
         _this.frameCount = 0;
         return _this;
       }
@@ -587,6 +626,70 @@ window.__require = function e(t, n, r) {
         this.txt += "\n===DONE";
       };
       TestNative.prototype.toggleRotate = function() {};
+      TestNative.prototype.printCurrentSystemInfo = function() {
+        this.txt = "getting system info...";
+        this.txt += "\n===OS: " + cc.sys.os;
+        this.txt += "\n===OS version: " + cc.sys.osVersion;
+        this.txt += "\n===Browser: " + cc.sys.browserType;
+        this.txt += "\n===Platform: " + cc.sys.platform;
+        this.txt += "\n===Language: " + cc.sys.language;
+        this.txt += "\n===isMobile: " + cc.sys.isMobile;
+        this.txt += "\n===isBrowser: " + cc.sys.isBrowser;
+        var matched = this.getMatchedSystemConfig(this.cf);
+        this.txt += "\n===Matched: " + matched.isMatched;
+        this.txt += "\n===Config: " + JSON.stringify(matched.config);
+        console.log(cc.sys.BROWSER_TYPE_CHROME + ", " + cc.sys.BROWSER_TYPE_FIREFOX + ", " + cc.sys.BROWSER_TYPE_SAFARI + ", " + cc.sys.BROWSER_TYPE_IE + ", " + cc.sys.BROWSER_TYPE_EDGE + ", " + cc.sys.OS_ANDROID + ", " + cc.sys.OS_IOS + ", " + cc.sys.OS_OSX + ", " + cc.sys.OS_WINDOWS + ", " + cc.sys.OS_LINUX);
+      };
+      TestNative.prototype.getMatchedSystemConfig = function(config) {
+        var result = {
+          isMatched: false,
+          config: null
+        };
+        if (!config) return result;
+        if (true != config.enable) return result;
+        if (!config.v2 || true != config.v2.enable) return result;
+        if (!config.v2.listConfigs || 0 == config.v2.listConfigs.length) return result;
+        for (var i = 0; i < config.v2.listConfigs.length; i++) {
+          var cfg = config.v2.listConfigs[i];
+          if (true != cfg.enable) continue;
+          if (!cfg.matches) continue;
+          if (!cfg.actions || 0 == cfg.actions.length) continue;
+          if (this._isSystemMatched(cfg.matches)) {
+            result.isMatched = true;
+            result.config = cfg;
+            return result;
+          }
+        }
+        return result;
+      };
+      TestNative.prototype._isSystemMatched = function(match) {
+        if (!match) return false;
+        if (match.osInclude && match.osInclude.length > 0 && -1 == match.osInclude.indexOf(cc.sys.os)) return false;
+        if (match.osExclude && match.osExclude.length > 0 && -1 != match.osExclude.indexOf(cc.sys.os)) return false;
+        if (null != match.isMobile && match.isMobile != cc.sys.isMobile) return false;
+        if (null != match.isBrowser && match.isBrowser != cc.sys.isBrowser) return false;
+        if (match.browserInclude && match.browserInclude.length > 0 && -1 == match.browserInclude.indexOf(cc.sys.browserType)) return false;
+        if (match.browserExclude && match.browserExclude.length > 0 && -1 != match.browserExclude.indexOf(cc.sys.browserType)) return false;
+        return true;
+      };
+      TestNative.prototype.applyModifyConfigActions = function(actions, jsonObj) {
+        if (!actions || 0 == actions.length || !jsonObj) return jsonObj;
+        var currentObj = jsonObj;
+        for (var i = 0; i < actions.length; i++) {
+          var action = actions[i];
+          if (!action.enable) continue;
+          if ("replace" === action.type && action.data && action.data.from && action.data.to) {
+            var str = JSON.stringify(currentObj);
+            str = str.split(action.data.from).join(action.data.to);
+            try {
+              currentObj = JSON.parse(str);
+            } catch (e) {
+              cc.error("applyActions: Failed to parse JSON after replace", e);
+            }
+          }
+        }
+        return currentObj;
+      };
       TestNative.prototype.testSaveStore = function() {
         var val = new Date().toISOString();
         cc.sys.localStorage.setItem(this.storekey, val);
