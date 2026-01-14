@@ -1,0 +1,38 @@
+{
+    "paths": {},
+    "uuids": [
+        "02delMVqdBD70a/HSD99FK",
+        "29FYIk+N1GYaeWH/q1NxQO",
+        "3a4moJrR5Hj61XxGouBYsk",
+        "6eBWFz0oVHPLIGQKf/9Thu",
+        "71VhFCTINJM6/Ky3oX9nBT",
+        "8c20Sso/ZEn7NUfNSM+EBh",
+        "a2MjXRFdtLlYQ5ouAFv/+R",
+        "b4P/PCArtIdIH38t6mlw8Y",
+        "e8Ueib+qJEhL6mXAHdnwbi",
+        "e97GVMl6JHh5Ml5qEDdSGa",
+        "ecpdLyjvZBwrvm+cedCcQy",
+        "ed0hW5J5ZKBar1gflskoHO",
+        "f0BIwQ8D5Ml7nTNQbh1YlS",
+        "ffDpHHVcZAhqOfy25Fe4w7"
+    ],
+    "scenes": {
+        "db://assets/nativeTest.fire": "3a4moJrR5Hj61XxGouBYsk"
+    },
+    "redirect": [
+        "02delMVqdBD70a/HSD99FK",
+        0,
+        "ecpdLyjvZBwrvm+cedCcQy",
+        0
+    ],
+    "deps": [
+        "internal"
+    ],
+    "packs": {},
+    "name": "main",
+    "importBase": "import",
+    "nativeBase": "native",
+    "debug": true,
+    "isZip": false,
+    "encrypted": false
+}
